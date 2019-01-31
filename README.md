@@ -7,5 +7,6 @@ Select parameters of the final spreadsheet:
 - date range
 - data merging method ("outer" vs "inner")
 - data sorting by date method ("ascending" vs "descending")
+- file format (.csv or .xlsx)
 - file name and path where data will be saved
 
