@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 
 ####################################################################################################
@@ -13,9 +14,9 @@ ticker = [
     'MWIG40'
 ]
 
-#DATE - date range in a format YYYY-MM-DD (default: 2018-01-02 to 2019-01-30)
+#DATE - date range in a format YYYY-MM-DD (default: 2018-01-02 to 2019-01-31)
 start_date = '2018-01-02'
-end_date = '2019-01-30'
+end_date = '2019-01-31'
 
 #MERGE - method of merging data by date ('inner' or 'outer', default='outer')
 merge_type = 'outer'
@@ -24,10 +25,13 @@ merge_type = 'outer'
 sort_ascending = True
 
 #FILE FORMAT - type of file format ('csv' or 'xlsx', default='csv')
-file_format = 'csv'
+file_format = 'xlsx'
 
-#PATH - complete path where file with market data will be saved on your local computer (default='C:\data_downloader')
-path = 'C:\data_downloader'
+#PATH - complete path where file with market data will be saved on your local computer;
+# if directory doesn't exist, it'll be created (default='C:\market_data')
+path = r'C:\market_data'
+if not os.path.exists(path):
+    os.mkdir(path)
 
 #FILE NAME - name of created csv file (default='\market_data')
 file_name = '\market_data'
