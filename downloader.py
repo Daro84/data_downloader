@@ -36,6 +36,9 @@ merge_type = 'outer'
 #SORT ASCENDING - sort data ascending (by date) (ascending=True, descending=False, default=True)
 sort_ascending = True
 
+#LANGUAGE - names of columns ('pl' or 'en', default='pl')
+language = 'pl'
+
 #FILE FORMAT - type of file format ('csv' or 'xlsx', default='csv')
 file_format = 'csv'
 
@@ -60,7 +63,7 @@ for t in ticker:
             df.drop(c, axis=1, inplace=True)
     for c in data_columns[1:]:
         if c in df.columns:
-            columns.append(c+'_'+t)
+            columns.append(t+'_'+c)
     df_list.append(df)
 
 # merge all data into one spreadsheet
@@ -69,13 +72,26 @@ for i in range(1,len(df_list)):
     merged = pd.merge(merged,df_list[i], on='Data', how=merge_type)
 
 # create final names of columns
-merged.columns = columns
+if language == 'pl':
+    merged.columns = columns
+else:
+    columns_en = []
+    for col in columns:
+        col_en = col.replace('Data', 'Date').\
+                    replace('Otwarcie', 'Open').\
+                    replace('Najwyzszy', 'High').\
+                    replace('Najnizszy', 'Low').\
+                    replace('Zamkniecie', 'Close').\
+                    replace('Wolumen', 'Volume').\
+                    replace('LOP', 'OpenInt')
+        columns_en.append(col_en)
+    merged.columns = columns_en
 
 # select data within a specified date range and sort appropriately (ascending or descending)
-merged['Data'] = pd.to_datetime(merged['Data'])
-merged = merged.set_index('Data')
+merged.iloc[:,0] = pd.to_datetime(merged.iloc[:,0])
+merged = merged.set_index('Data') if language == 'pl' else merged.set_index('Date')
 merged = merged[start_date:end_date]
-merged.sort_values(by='Data', ascending=sort_ascending, inplace=True)
+merged.sort_index(ascending=sort_ascending, inplace=True)
 
 # write data to csv or xlsx format and save on your local computer in a specified path
 if file_format == 'csv':
