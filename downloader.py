@@ -49,7 +49,7 @@ if not os.path.exists(path):
     os.mkdir(path)
 
 #FILE NAME - name of created csv file (default='\market_data')
-file_name = '\market_data'
+file_name = 'market_data'
 
 #####################################################################################################
 
@@ -94,7 +94,10 @@ merged = merged[start_date:end_date]
 merged.sort_index(ascending=sort_ascending, inplace=True)
 
 # write data to csv or xlsx format and save on your local computer in a specified path
+file_to_save = file_name + '.' +file_format
+fullpath = os.path.join(path, file_to_save)
+
 if file_format == 'csv':
-    merged.to_csv(path + file_name + '.csv')
+    merged.to_csv(fullpath)
 else:
-    merged.to_excel(path + file_name + '.xlsx')
+    merged.to_excel(fullpath)
