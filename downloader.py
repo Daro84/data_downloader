@@ -44,7 +44,7 @@ file_format = 'csv'
 
 #PATH - complete path where file with market data will be saved on your local computer;
 # if directory doesn't exist, it'll be created (default='C:\market_data')
-path = r'C:\market_data'
+path = 'C:\market_data'
 if not os.path.exists(path):
     os.mkdir(path)
 
@@ -63,13 +63,13 @@ for t in ticker:
             df.drop(c, axis=1, inplace=True)
     for c in data_columns[1:]:
         if c in df.columns:
-            columns.append(t+'_'+c)
+            columns.append(t + '_' + c)
     df_list.append(df)
 
 # merge all data into one spreadsheet
 merged = df_list[0]
-for i in range(1,len(df_list)):
-    merged = pd.merge(merged,df_list[i], on='Data', how=merge_type)
+for i in range(1, len(df_list)):
+    merged = pd.merge(merged, df_list[i], on='Data', how=merge_type)
 
 # create final names of columns
 if language == 'pl':
@@ -88,13 +88,13 @@ else:
     merged.columns = columns_en
 
 # select data within a specified date range and sort appropriately (ascending or descending)
-merged.iloc[:,0] = pd.to_datetime(merged.iloc[:,0])
+merged.iloc[:, 0] = pd.to_datetime(merged.iloc[:, 0])
 merged = merged.set_index('Data') if language == 'pl' else merged.set_index('Date')
 merged = merged[start_date:end_date]
 merged.sort_index(ascending=sort_ascending, inplace=True)
 
 # write data to csv or xlsx format and save on your local computer in a specified path
-file_to_save = file_name + '.' +file_format
+file_to_save = file_name + '.' + file_format
 fullpath = os.path.join(path, file_to_save)
 
 if file_format == 'csv':
