@@ -55,7 +55,7 @@ file_name = 'market_data'
 
 # download data for each instrument from Stooq.pl and store in a list
 df_list = []
-columns = ['Data']
+columns = []
 for t in ticker:
     df = pd.read_csv('https://stooq.pl/q/d/l/?s=' + t + '&i=d')
     for c in df.columns:
@@ -71,7 +71,21 @@ merged = df_list[0]
 for i in range(1, len(df_list)):
     merged = pd.merge(merged, df_list[i], on='Data', how=merge_type)
 
+# select data within a specified date range and sort appropriately (ascending or descending)
+merged.iloc[:, 0] = pd.to_datetime(merged.iloc[:, 0])
+merged = merged.set_index('Data')
+merged.sort_index(ascending=sort_ascending, inplace=True)
+merged = merged[start_date:end_date]
+
 # create final names of columns
+col_names_ang = {'Data': 'Date',
+                'Otwarcie': 'Open',
+                'Najwyzszy': 'High',
+                'Najnizszy': 'Low',
+                'Zamkniecie': 'Close',
+                'Wolumen': 'Volume',
+                'LOP': 'OpenInt'}
+
 if language == 'pl':
     merged.columns = columns
 else:
@@ -86,12 +100,6 @@ else:
                     replace('LOP', 'OpenInt')
         columns_en.append(col_en)
     merged.columns = columns_en
-
-# select data within a specified date range and sort appropriately (ascending or descending)
-merged.iloc[:, 0] = pd.to_datetime(merged.iloc[:, 0])
-merged = merged.set_index('Data') if language == 'pl' else merged.set_index('Date')
-merged = merged[start_date:end_date]
-merged.sort_index(ascending=sort_ascending, inplace=True)
 
 # write data to csv or xlsx format and save on your local computer in a specified path
 file_to_save = file_name + '.' + file_format
